@@ -15,44 +15,19 @@ var styleImage = {
 class PetComponent extends React.Component {
   constructor(props) {
     super(props);
-    
-    this.state = {
-      likesCount: 0
-    };
-    
-    this.handleLikeBtnClick = this.handleLikeBtnClick.bind(this);
-    this.handleDislikeBtnClick = this.handleDislikeBtnClick.bind(this);
-  }
-  
-  handleLikeBtnClick() {
-    this.setState(function(prevState) {
-      return {
-        likesCount: prevState.likesCount + 1
-      };
-    });
-  }
-  
-  handleDislikeBtnClick() {
-    this.setState(function(prevState){
-      if(prevState.likesCount > 0){
-        return {
-          likesCount: prevState.likesCount - 1
-        };
-      }
-    });
   }
 
   render(){
     return (
       <div style={styleContainer}>
-        <h3>{this.props.petName} likes: {this.state.likesCount}</h3>
+        <h3>{this.props.petName} likes: {this.props.likesCount}</h3>
         <img 
           style={styleImage} 
           src={this.props.petImageURL} 
           alt={this.props.petName} 
         />
-        <button onClick={this.handleLikeBtnClick}>Like</button>
-        <button onClick={this.handleDislikeBtnClick}>Dislike</button>
+        <button value={this.props.petName} onClick={this.props.onLikeBtnClick}>Like</button>
+        <button value={this.props.petName} onClick={this.props.onDislikeBtnClick}>Dislike</button>
       </div>
     );
   }
