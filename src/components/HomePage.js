@@ -26,7 +26,9 @@ class HomePage extends React.Component {
     super(props);
     this.state = {
       catLikesCount: 0,
-      dogLikesCount: 0
+      dogLikesCount: 0,
+      catResult: '',
+      dogResult: ''
     };
     this.handleLikeBtnClick = this.handleLikeBtnClick.bind(this);
     this.handleDislikeBtnClick = this.handleDislikeBtnClick.bind(this);
@@ -39,14 +41,12 @@ class HomePage extends React.Component {
     if(petName === 'Cat'){
       this.setState(function(prevState) {
         return {
-          catLikesCount: prevState.catLikesCount + 1,
-          dogLikesCount: prevState.dogLikesCount
+          catLikesCount: prevState.catLikesCount + 1
         }
       });
     } else if(petName === 'Dog'){
       this.setState(function(prevState) {
         return {
-          catLikesCount: prevState.catLikesCount,
           dogLikesCount: prevState.dogLikesCount + 1
         }
       });
@@ -57,34 +57,50 @@ class HomePage extends React.Component {
     var petName = event.target.value;
     if(petName === 'Cat'){
       this.setState(function(prevState) {
-        return {
-          catLikesCount: prevState.catLikesCount - 1,
-          dogLikesCount: prevState.dogLikesCount
+        if(prevState.catLikesCount> 0){
+          return {
+            catLikesCount: prevState.catLikesCount - 1
+          }
         }
       });
     } else if(petName === 'Dog'){
       this.setState(function(prevState) {
-        return {
-          catLikesCount: prevState.catLikesCount,
-          dogLikesCount: prevState.dogLikesCount - 1
-        }
+        if(prevState.dogLikesCount> 0){
+          return {
+            dogLikesCount: prevState.dogLikesCount - 1
+          }
+        } 
       });
     }
   }
 
   handleShowWinnerBtnClick(){
 
+    var catResult = 'Tie!',
+        dogResult = 'Tie!'
+
     if(this.state.catLikesCount > this.state.dogLikesCount){
-      console.log('cat wins');
+      catResult = 'Winner!';
+      dogResult = 'Loser!';
     } else if(this.state.catLikesCount < this.state.dogLikesCount){
-      console.log('dog wins');
-    } else {
-      console.log('tie');
+      catResult = 'Loser!';
+      dogResult = 'Winner!';
     }
+
+    this.setState({
+      catResult: catResult,
+      dogResult: dogResult
+    });
   }
 
   handleStartOverBtnClick(){
-
+    this.setState({
+        catLikesCount: 0,
+        dogLikesCount: 0,
+        catResult: '',
+        dogResult: ''
+      }
+    );
   }
 
   render() {
@@ -98,6 +114,7 @@ class HomePage extends React.Component {
             petName="Cat" 
             likesCount={this.state.catLikesCount}
             petImageURL="https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?w=940&h=650&auto=compress&cs=tinysrgb"
+            result={this.state.catResult}
             onLikeBtnClick={this.handleLikeBtnClick}
             onDislikeBtnClick={this.handleDislikeBtnClick}  
           />
@@ -105,12 +122,14 @@ class HomePage extends React.Component {
             petName="Dog" 
             likesCount={this.state.dogLikesCount}
             petImageURL="https://images.pexels.com/photos/39317/chihuahua-dog-puppy-cute-39317.jpeg?w=1260&h=750&auto=compress&cs=tinysrgb" 
+            result={this.state.dogResult}
             onLikeBtnClick={this.handleLikeBtnClick}
             onDislikeBtnClick={this.handleDislikeBtnClick} 
           />
         </div>
         <div style={styleContainer}>
-          <button style={btnStyle} onClick={this.handleShowWinnerBtnClick}>Show Winner</button>
+          {!this.state.dogResult &&
+            <button style={btnStyle} onClick={this.handleShowWinnerBtnClick}>Show Winner</button>}
           <button style={btnStyle} onClick={this.handleStartOverBtnClick}>Restart</button>
         </div>
       </div>
