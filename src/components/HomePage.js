@@ -1,5 +1,5 @@
 var React = require('react');
-
+var axios = require('axios');
 var PetComponent = require('./PetComponent');
 
 
@@ -20,6 +20,11 @@ var btnStyle = {
   lineHeight: '25px'
 };
 
+var API_KEY = '123456789';
+
+var CAT_URL = 'http://localhost:63000/cat/?api_key=' + API_KEY;
+var DOG_URL = 'http://localhost:63000/dog/?api_key=' + API_KEY;
+
 
 class HomePage extends React.Component {
   constructor(props){
@@ -27,11 +32,13 @@ class HomePage extends React.Component {
     this.state = {
       cat: {
         likesCount: 0,
-        result: 0
+        result: 0,
+        imageUrl: ''
       },
       dog: {
         likesCount: 0,
-        result: 0
+        result: 0,
+        imageUrl: ''
       }
     };
     this.handleLikeBtnClick = this.handleLikeBtnClick.bind(this);
@@ -39,15 +46,60 @@ class HomePage extends React.Component {
     this.handleShowWinnerBtnClick = this.handleShowWinnerBtnClick.bind(this);
     this.handleStartOverBtnClick = this.handleStartOverBtnClick.bind(this);
   }
+  
+  componentDidMount(){
+    this.fetchImages();
+  }
+  
+  fetchCatImage(){
+    axios.get(CAT_URL)
+      .then(function(resp){
+        var imageUrl = resp.data.imageUrl;
+      
+      this.setState(function(prevState){
+         return {
+            cat: {
+              likesCount: prevState.cat.likesCount,
+              result: prevState.cat.result,
+              imageUrl: imageUrl
+            }
+          };
+        });
+      }.bind(this));
+  }
+  
+  fetchDogImage(){
+    axios.get(DOG_URL)
+      .then(function(resp){
+        var imageUrl = resp.data.imageUrl;
+      
+      this.setState(function(prevState){
+        return {
+            dog: {
+              likesCount: prevState.dog.likesCount,
+              result: prevState.dog.result,
+              imageUrl: imageUrl
+            }
+          };
+        });
+      }.bind(this));
+  }
+  
+  fetchImages(){
+    this.fetchDogImage();
+    this.fetchCatImage();
+  }
 
   handleLikeBtnClick(event) {
+    this.fetchImages();
     var petName = event.target.value;
     if(petName === 'Cat'){
       this.setState(function(prevState) {
         return {
           cat: {
             likesCount: prevState.cat.likesCount + 1,
-            result: prevState.cat.result
+            result: prevState.cat.result,
+            imageUrl: prevState.cat.imageUrl
           }
         }
       });
@@ -56,7 +108,8 @@ class HomePage extends React.Component {
         return {
           dog: {
             likesCount: prevState.dog.likesCount + 1,
-            result: prevState.dog.result
+            result: prevState.dog.result,
+            imageUrl: prevState.dog.imageUrl
           }
         }
       });
@@ -64,6 +117,7 @@ class HomePage extends React.Component {
   }
   
   handleDislikeBtnClick(event) {
+    this.fetchImages();
     var petName = event.target.value;
     if(petName === 'Cat'){
       this.setState(function(prevState) {
@@ -71,7 +125,8 @@ class HomePage extends React.Component {
           return {
             cat: {
               likesCount: prevState.cat.likesCount - 1,
-              result: prevState.cat.result
+              result: prevState.cat.result,
+              imageUrl: prevState.cat.imageUrl
             }
           }
         }
@@ -82,7 +137,8 @@ class HomePage extends React.Component {
           return {
             dog: {
               likesCount: prevState.dog.likesCount - 1,
-              result: prevState.dog.result
+              result: prevState.dog.result,
+              imageUrl: prevState.dog.imageUrl
             }
           }
         } 
@@ -107,25 +163,30 @@ class HomePage extends React.Component {
       return{
         cat: {
           likesCount: prevState.cat.likesCount,
-          result: catResult
+          result: catResult,
+          imageUrl: prevState.cat.imageUrl
         },
         dog: {
           likesCount: prevState.dog.likesCount,
-          result: dogResult
+          result: dogResult,
+          imageUrl: prevState.dog.imageUrl
         }
       };
     });
   }
 
   handleStartOverBtnClick(){
+    this.fetchImages();
     this.setState({
         cat: {
           likesCount: 0,
-          result: 0
+          result: 0,
+          imageUrl: ''
         },
         dog: {
           likesCount: 0,
-          result: 0
+          result: 0,
+          imageUrl: ''
         }
       }
     );
@@ -141,7 +202,7 @@ class HomePage extends React.Component {
           <PetComponent 
             petName="Cat" 
             likesCount={this.state.cat.likesCount}
-            petImageURL="https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?w=940&h=650&auto=compress&cs=tinysrgb"
+            petImageURL={this.state.cat.imageUrl}
             result={this.state.cat.result}
             onLikeBtnClick={this.handleLikeBtnClick}
             onDislikeBtnClick={this.handleDislikeBtnClick}  
@@ -149,7 +210,7 @@ class HomePage extends React.Component {
           <PetComponent 
             petName="Dog" 
             likesCount={this.state.dog.likesCount}
-            petImageURL="https://images.pexels.com/photos/39317/chihuahua-dog-puppy-cute-39317.jpeg?w=1260&h=750&auto=compress&cs=tinysrgb" 
+            petImageURL={this.state.dog.imageUrl}
             result={this.state.dog.result}
             onLikeBtnClick={this.handleLikeBtnClick}
             onDislikeBtnClick={this.handleDislikeBtnClick} 
