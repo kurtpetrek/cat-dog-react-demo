@@ -1,4 +1,5 @@
 var React = require('react');
+var constants = require('../constants');
 
 var styleContainer = {
   maxWidth: '400px',
@@ -13,13 +14,16 @@ var styleImage = {
   margin: 'auto'
 };
 
+var LOSER = constants.LOSER;
+var CUTE = constants.CUTE;
+
 var PetComponent = function (props) {
   var result = null;
   var disabled = false;
 
   if (props.result !== 0){
     var resultStyle = null;
-    if (props.result === 'Loser!'){
+    if (props.result === LOSER){
       resultStyle = {color: 'red'};
       disabled = true;
     } else {
@@ -42,7 +46,7 @@ var PetComponent = function (props) {
       <img 
         style={styleImage} 
         src={props.petImageURL} 
-        alt={props.petName} 
+        alt={CUTE + ' ' + props.petName} 
       />
       <button value={props.petName} disabled={disabled} onClick={props.onLikeBtnClick}>Like</button>
       <button value={props.petName} disabled={disabled} onClick={props.onDislikeBtnClick}>Dislike</button>
