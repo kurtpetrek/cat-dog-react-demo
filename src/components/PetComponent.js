@@ -17,7 +17,7 @@ var styleImage = {
 var LOSER = constants.LOSER;
 var CUTE = constants.CUTE;
 
-var PetComponent = function (props) {
+var PetComponent = function(props) {
   var result = null;
   var disabled = false;
 
